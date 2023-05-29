@@ -1,0 +1,4 @@
+gin:
+  serve:
+    host: localhost
+    port: :50030
