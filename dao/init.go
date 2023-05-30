@@ -1,4 +1,4 @@
-package mysql
+package dao
 
 import (
 	"NetworkDisk/config"
@@ -11,13 +11,17 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-var DB *gorm.DB
+var MysqlDb *gorm.DB
 
 func init() {
+	connectMysql()
+}
+
+func connectMysql() {
 	var err error
 	mysqlConfig := config.GlobalConfig.Databases.Mysql
-	dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
-	dsn = fmt.Sprintf("%v:%v@tcp(%v%v)/%v?charset=%v&parseTime=True&loc=Local",
+	// dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%v:%v@tcp(%v%v)/%v?charset=%v&parseTime=True&loc=Local",
 		mysqlConfig.Account, mysqlConfig.Password, mysqlConfig.URL, mysqlConfig.Port,
 		mysqlConfig.DbName, mysqlConfig.Charset)
 
@@ -31,7 +35,9 @@ func init() {
 	// 	},
 	// )
 
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+	fmt.Println(dsn)
+
+	MysqlDb, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		// Logger:                 newLogger,
 		SkipDefaultTransaction: true, // 禁用默认事务
 		PrepareStmt:            true, // 缓存预编译语句
@@ -41,15 +47,15 @@ func init() {
 		},
 	})
 	if err != nil {
-		log.Println("数据库连接失败")
+		log.Println("Mysql连接失败")
 		log.Println(err)
 		os.Exit(1)
 	}
 
-	log.Println("数据库连接成功")
+	log.Println("Mysql连接成功")
 
 	//根据*grom.DB对象获得*sql.DB的通用数据库接口
-	sqlDb, _ := DB.DB()
+	sqlDb, _ := MysqlDb.DB()
 	sqlDb.SetMaxIdleConns(mysqlConfig.MaxIdleConns) //设置最大连接数
 	sqlDb.SetMaxOpenConns(mysqlConfig.MaxOpenConns) //设置最大的空闲连接数
 }

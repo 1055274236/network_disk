@@ -1,4 +1,4 @@
-package text_utils
+package test_utils
 
 import (
 	"encoding/base64"

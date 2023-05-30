@@ -2,6 +2,8 @@ gin:
   serve:
     host: localhost
     port: :50030
+  login:
+    ext: 259200 #cookie超时时间 /秒
 
 databases:
   mysql:

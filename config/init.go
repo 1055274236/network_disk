@@ -14,6 +14,9 @@ type ConfigStruct struct {
 			Host string `yaml:"host"`
 			Port string `yaml:"port"`
 		} `yaml:"serve"`
+		Login struct {
+			Ext int64 `yaml:"ext"`
+		} `yaml:"login"`
 	} `yaml:"gin"`
 	Databases struct {
 		Mysql struct {
