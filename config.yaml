@@ -2,3 +2,14 @@ gin:
   serve:
     host: localhost
     port: :50030
+
+databases:
+  mysql:
+    account: network_disk
+    password: password
+    url: 127.0.0.1
+    port: :3306
+    dbName: network_disk
+    charset: utf8
+    maxIdleConns: 5 #最大连接数
+    MaxOpenConns: 3 #最大的空闲连接数
