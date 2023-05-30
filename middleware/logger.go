@@ -31,6 +31,6 @@ func Logger() gin.HandlerFunc {
 		timeNow := time.Now()
 		c.Next()
 		tc := time.Since(timeNow)
-		fmt.Printf("%v\t%v\t%v\t%v", c.FullPath(), c.ClientIP(), time.Now().Format("2006-01-02"), tc)
+		fmt.Printf("%v\t%v\t%v\t%v\n", c.FullPath(), c.ClientIP(), time.Now().Format("2006-01-02"), tc)
 	}
 }
