@@ -2,6 +2,7 @@ package userservice
 
 import (
 	"NetworkDisk/config"
+	"NetworkDisk/dao/loginlogdao"
 	"NetworkDisk/dao/userdao"
 	"NetworkDisk/service"
 	"NetworkDisk/utils/verifyuser"
@@ -25,7 +26,6 @@ func Login(ctx *gin.Context) {
 
 	user, rows := userdao.GetByAccount(ctx, account)
 	password = fmt.Sprintf("%x", md5.Sum([]byte(password)))
-	fmt.Println("password: ", password)
 	// 账密校验
 	if rows == 0 {
 		service.SendErrorJson(ctx, nil, "该账户不存在！")
@@ -37,9 +37,11 @@ func Login(ctx *gin.Context) {
 
 	// 返回登陆成功并修改cookie
 	ip := ctx.ClientIP()
-	token := verifyuser.EncodeUser(verifyuser.UserMessage{Id: int64(user.Id), Account: account,
+	token := verifyuser.EncodeUser(verifyuser.UserMessage{Id: user.Id, Account: account,
 		Ip: ip, Ext: time.Now().Unix() + config.GlobalConfig.Gin.Login.Ext})
 	ctx.SetCookie("token", base64.StdEncoding.EncodeToString(token), 0, "/", "localhost", false, true)
 
 	service.SendSuccessJson(ctx, "登陆成功！")
+
+	go loginlogdao.Add(user.Id, account, ip, "web")
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type UserMessage struct {
-	Id      int64  `json:"id"`
+	Id      int    `json:"id"`
 	Account string `json:"account"`
 	Ip      string `json:"ip"`
 	Ext     int64  `json:"ext"`
