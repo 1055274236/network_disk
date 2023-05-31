@@ -8,4 +8,5 @@ import (
 
 func SetupRoute(engine *gin.Engine) {
 	engine.POST("/login", userservice.Login)
+	engine.POST("/signin", userservice.SignIn)
 }
