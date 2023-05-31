@@ -35,8 +35,6 @@ func connectMysql() {
 	// 	},
 	// )
 
-	fmt.Println(dsn)
-
 	MysqlDb, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		// Logger:                 newLogger,
 		SkipDefaultTransaction: true, // 禁用默认事务
