@@ -35,6 +35,9 @@ type ConfigStruct struct {
 			MaxOpenConns int    `yaml:"MaxOpenConns"`
 		} `yaml:"mysql"`
 	} `yaml:"databases"`
+	Service struct {
+		MaxCapacity int64 `yaml:"maxCapacity"`
+	} `yaml:"service"`
 }
 
 func init() {

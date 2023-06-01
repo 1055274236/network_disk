@@ -38,11 +38,20 @@ func Login(ctx *gin.Context) {
 
 	// 返回登陆成功并修改cookie
 	ip := ctx.ClientIP()
-	token := verifyuser.EncodeUser(verifyuser.UserMessage{Id: user.Id, Account: account,
+	token, err := verifyuser.EncodeUser(verifyuser.UserMessage{Id: user.Id, Account: account,
 		Ip: ip, Ext: time.Now().Unix() + config.GlobalConfig.Gin.Login.Ext})
+	if err != nil {
+		panic("系统生成token失败，请联系开发人员处理！")
+	}
 	ctx.SetCookie("token", base64.StdEncoding.EncodeToString(token), 0, "/", "localhost", false, true)
 
-	service.SendSuccessJson(ctx, "登陆成功！")
+	service.SendSuccessJson(ctx, struct {
+		Account     string `json:"account"`
+		Name        string `json:"name"`
+		Cover       string `json:"cover"`
+		MaxCapacity int64  `json:"maxCapacity"`
+		NowCapacity int64  `json:"nowCapacity"`
+	}{user.Account, user.Name, user.Cover, user.MaxCapacity, user.NowCapacity}, "登陆成功！")
 
 	go loginlogdao.AddOne(user.Id, account, ip, "web")
 }
@@ -53,6 +62,10 @@ func SignIn(ctx *gin.Context) {
 	cover := ctx.PostForm("cover")
 	maxCapacityString := ctx.PostForm("maxCapacity")
 	maxCapacity, err := strconv.ParseInt(maxCapacityString, 10, 64)
+
+	if maxCapacity == 0 || err != nil {
+		maxCapacity = config.GlobalConfig.Service.MaxCapacity
+	}
 
 	// 参数查找
 	if len(account) == 0 || len(password) == 0 || err != nil {
@@ -67,13 +80,22 @@ func SignIn(ctx *gin.Context) {
 		return
 	}
 
-	// 返回登陆成功并修改cookie
+	// 生成token
 	ip := ctx.ClientIP()
-	token := verifyuser.EncodeUser(verifyuser.UserMessage{Id: user.Id, Account: account,
+	token, err := verifyuser.EncodeUser(verifyuser.UserMessage{Id: user.Id, Account: account,
 		Ip: ip, Ext: time.Now().Unix() + config.GlobalConfig.Gin.Login.Ext})
+	if err != nil {
+		panic("系统生成token失败，请联系开发人员处理！")
+	}
 	ctx.SetCookie("token", base64.StdEncoding.EncodeToString(token), 0, "/", "localhost", false, true)
 
-	service.SendSuccessJson(ctx, "注册成功！")
+	service.SendSuccessJson(ctx, struct {
+		Account     string `json:"account"`
+		Name        string `json:"name"`
+		Cover       string `json:"cover"`
+		MaxCapacity int64  `json:"maxCapacity"`
+		NowCapacity int64  `json:"nowCapacity"`
+	}{user.Account, user.Name, user.Cover, user.MaxCapacity, user.NowCapacity}, "注册成功！")
 
 	go loginlogdao.AddOne(user.Id, account, ip, "web")
 }

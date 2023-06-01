@@ -16,15 +16,20 @@ func UserVerify() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token, err := ctx.Cookie("token")
 		if err != nil {
-			service.SendErrorJson(ctx, nil, "用户信息错误！")
+			service.SendErrorJson(ctx, nil, "用户信息错误！请重新登陆！")
 			ctx.Abort()
 		}
 		decodeString, err := base64.StdEncoding.DecodeString(token)
 		if err != nil {
-			service.SendErrorJson(ctx, nil, "用户信息错误！")
+			service.SendErrorJson(ctx, nil, "用户信息错误！请重新登陆！")
 			ctx.Abort()
 		}
-		user := verifyuser.DecodeUser(decodeString)
+		user, err := verifyuser.DecodeUser(decodeString)
+		if err != nil {
+			service.SendErrorJson(ctx, nil, "用户信息错误！请重新登陆！")
+			ctx.Abort()
+		}
+
 		timeNow := time.Now()
 		b, _ := ctx.GetRawData()
 		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(b))

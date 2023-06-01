@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,17 +21,19 @@ func (w responseWriter) Write(b []byte) (int, error) {
 }
 
 func Logger() gin.HandlerFunc {
-	return func(c *gin.Context) {
+	return func(ctx *gin.Context) {
 		// 使用重写的writer
 		writer := responseWriter{
-			c.Writer,
+			ctx.Writer,
 			bytes.NewBuffer([]byte{}),
 		}
-		c.Writer = writer
+		ctx.Writer = writer
 
 		timeNow := time.Now()
-		c.Next()
+		b, _ := ctx.GetRawData()
+		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(b))
+		ctx.Next()
 		tc := time.Since(timeNow)
-		fmt.Printf("%v\t%v\t%v\t%v\n", c.FullPath(), c.ClientIP(), time.Now().Format("2006-01-02"), tc)
+		fmt.Printf("%v\t%v\t%v\t%v\t%v\n", ctx.FullPath(), string(b), ctx.ClientIP(), time.Now().Format("2006-01-02 15:04:05"), tc)
 	}
 }

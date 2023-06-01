@@ -9,11 +9,11 @@ import (
 type ReturnMessage struct {
 	Code    int    `json:"code"`
 	Data    any    `json:"data"`
-	Message string `json:"errmessage"`
+	Message string `json:"message"`
 }
 
-func SendSuccessJson(ctx *gin.Context, data any) {
-	ctx.JSON(http.StatusOK, ReturnMessage{http.StatusOK, data, ""})
+func SendSuccessJson(ctx *gin.Context, data any, message string) {
+	ctx.JSON(http.StatusOK, ReturnMessage{http.StatusOK, data, message})
 }
 
 func SendErrorJson(ctx *gin.Context, data any, errmessage string) {
