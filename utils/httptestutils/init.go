@@ -10,7 +10,7 @@ import (
 var Engine *gin.Engine
 
 func init() {
-	gin.SetMode(gin.DebugMode)
+	gin.SetMode(gin.ReleaseMode)
 	Engine = gin.New()
 	controller.SetupRouter(Engine)
 	go Engine.Run(config.GlobalConfig.Gin.Serve.Host + config.GlobalConfig.Gin.Serve.Port)
