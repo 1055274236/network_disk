@@ -4,9 +4,7 @@ import (
 	"NetworkDisk/dao/oprationlogdao"
 	"NetworkDisk/service"
 	"NetworkDisk/utils/verifyuser"
-	"bytes"
 	"encoding/base64"
-	"io"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -31,9 +29,13 @@ func UserVerify() gin.HandlerFunc {
 		}
 
 		timeNow := time.Now()
-		b, _ := ctx.GetRawData()
-		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(b))
+		b, ok := ctx.Get("ContextParams")
+		if !ok {
+			b = "err"
+		}
+		ctx.Set("account", user.Account)
 		ctx.Next()
-		go oprationlogdao.Add(user.Id, string(b), ctx.FullPath(), int(time.Since(timeNow).Milliseconds()), ctx.ClientIP())
+		ctx.Set("account", nil)
+		go oprationlogdao.Add(user.Id, b.(string), ctx.FullPath(), int(time.Since(timeNow).Milliseconds()), ctx.ClientIP())
 	}
 }
