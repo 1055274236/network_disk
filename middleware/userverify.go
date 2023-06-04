@@ -33,8 +33,10 @@ func UserVerify() gin.HandlerFunc {
 		if !ok {
 			b = "err"
 		}
+		ctx.Set("userId", user.Id)
 		ctx.Set("account", user.Account)
 		ctx.Next()
+		ctx.Set("userId", nil)
 		ctx.Set("account", nil)
 		go oprationlogdao.Add(user.Id, b.(string), ctx.FullPath(), int(time.Since(timeNow).Milliseconds()), ctx.ClientIP())
 	}
