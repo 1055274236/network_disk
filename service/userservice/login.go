@@ -39,7 +39,7 @@ func Login(ctx *gin.Context) {
 	// 返回登陆成功并修改cookie
 	ip := ctx.ClientIP()
 	token, err := verifyuser.EncodeUser(verifyuser.UserMessage{Id: user.Id, Account: account,
-		Ip: ip, Ext: time.Now().Unix() + config.GlobalConfig.Gin.Login.Ext})
+		Ip: ip, CreatedAt: time.Now().Unix()})
 	if err != nil {
 		panic("系统生成token失败，请联系开发人员处理！")
 	}
@@ -83,7 +83,7 @@ func SignIn(ctx *gin.Context) {
 	// 生成token
 	ip := ctx.ClientIP()
 	token, err := verifyuser.EncodeUser(verifyuser.UserMessage{Id: user.Id, Account: account,
-		Ip: ip, Ext: time.Now().Unix() + config.GlobalConfig.Gin.Login.Ext})
+		Ip: ip, CreatedAt: time.Now().Unix()})
 	if err != nil {
 		panic("系统生成token失败，请联系开发人员处理！")
 	}

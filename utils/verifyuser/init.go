@@ -6,10 +6,10 @@ import (
 )
 
 type UserMessage struct {
-	Id      int    `json:"id"`
-	Account string `json:"account"`
-	Ip      string `json:"ip"`
-	Ext     int64  `json:"ext"`
+	Id        int    `json:"id"`
+	Account   string `json:"account"`
+	Ip        string `json:"ip"`
+	CreatedAt int64  `json:"created_at"`
 }
 
 var (
