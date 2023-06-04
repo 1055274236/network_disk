@@ -73,3 +73,17 @@ func GetById(id int) (FileIndexTableStruct, error) {
 	result := dao.MysqlDb.Limit(1).Find(&value)
 	return value, result.Error
 }
+
+// 检查当前文件夹下，是否名称相同
+func GetIsRepetition(userId int, parentId int, name string) (bool, error) {
+	result, err := GetByUserIdAndParentId(userId, parentId)
+	if err != nil {
+		return true, err
+	}
+	for _, item := range result {
+		if item.FileName == name {
+			return true, nil
+		}
+	}
+	return false, nil
+}
