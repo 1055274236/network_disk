@@ -10,14 +10,14 @@ func AddOne(account string, password string, cover string, maxCapacity int64) (U
 	return item, err.Error
 }
 
-func GetById(id int) (UserTableStruct, int64) {
+func GetById(id int) (UserTableStruct, error) {
 	var user UserTableStruct
 	result := dao.MysqlDb.Limit(1).Find(&user, id)
-	return user, result.RowsAffected
+	return user, result.Error
 }
 
-func GetByAccount(account string) (UserTableStruct, int64) {
-	var user UserTableStruct
-	result := dao.MysqlDb.Where(UserTableStruct{Account: account}, "Account").Take(&user)
-	return user, result.RowsAffected
+func GetByAccount(account string) (UserTableStruct, error) {
+	user := UserTableStruct{}
+	result := dao.MysqlDb.Where("account = ?", account).First(&user)
+	return user, result.Error
 }
