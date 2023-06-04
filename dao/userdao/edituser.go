@@ -12,7 +12,7 @@ func AddOne(account string, password string, cover string, maxCapacity int64) (U
 
 func GetById(id int) (UserTableStruct, int64) {
 	var user UserTableStruct
-	result := dao.MysqlDb.Limit(1).Where(UserTableStruct{Id: id}, "Id").Find(&user)
+	result := dao.MysqlDb.Limit(1).Find(&user, id)
 	return user, result.RowsAffected
 }
 

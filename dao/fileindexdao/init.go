@@ -62,7 +62,7 @@ func GetByUserIdAndParentId(userId int, parentId int) ([]FileIndexTableStruct, e
 		result = dao.MysqlDb.Where(&FileIndexTableStruct{HoldingUser: userId, ParentId: parentId}).Find(&value)
 	} else {
 		parent := FileIndexTableStruct{Id: parentId}
-		dao.MysqlDb.Limit(1).Where("id = ?", parent).Find(&parent)
+		dao.MysqlDb.Limit(1).Find(&parent, parentId)
 		result = dao.MysqlDb.Where(&FileIndexTableStruct{HoldingUser: userId, ParentId: parentId}).Limit(parent.FileNum).Find(&value)
 	}
 	return value, result.Error
@@ -70,7 +70,7 @@ func GetByUserIdAndParentId(userId int, parentId int) ([]FileIndexTableStruct, e
 
 func GetById(id int) (FileIndexTableStruct, error) {
 	value := FileIndexTableStruct{}
-	result := dao.MysqlDb.Limit(1).Find(&value)
+	result := dao.MysqlDb.Limit(1).Find(&value, id)
 	return value, result.Error
 }
 
