@@ -42,7 +42,10 @@ type ConfigStruct struct {
 
 func init() {
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(getCurrentAbPath())
+	// 为了测试文件能够正常运行的路径
+	viper.AddConfigPath(path.Join(getCurrentAbPath(), ".."))
+	// go build 后设置的路径
+	viper.AddConfigPath("/")
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("read config file failed, %v", err)
 	}
