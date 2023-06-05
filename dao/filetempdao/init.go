@@ -10,6 +10,6 @@ func Add(name string, id int) (FileTempTableStruct, error) {
 
 func GetById(id int) (FileTempTableStruct, error) {
 	temp := FileTempTableStruct{}
-	result := dao.MysqlDb.Limit(1).Find(&temp, id)
+	result := dao.MysqlDb.First(&temp, id)
 	return temp, result.Error
 }

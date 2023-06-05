@@ -23,6 +23,6 @@ func GetByMd5AndSha1(md5 string, sha1 string) (FileStoreTableStruct, error) {
 
 func GetById(id int) (FileStoreTableStruct, error) {
 	temp := FileStoreTableStruct{Id: id}
-	result := dao.MysqlDb.Limit(1).Find(&temp, id)
+	result := dao.MysqlDb.First(&temp, id)
 	return temp, result.Error
 }

@@ -12,7 +12,7 @@ func AddOne(account string, password string, cover string, maxCapacity int64) (U
 
 func GetById(id int) (UserTableStruct, error) {
 	var user UserTableStruct
-	result := dao.MysqlDb.Limit(1).Find(&user, id)
+	result := dao.MysqlDb.First(&user, id)
 	return user, result.Error
 }
 
