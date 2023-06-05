@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"NetworkDisk/dao/errlogdao"
+	"NetworkDisk/service"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,8 @@ func Recovery() gin.HandlerFunc {
 				}
 
 				go errlogdao.Add(ctx.FullPath(), hearder, contextParams.(string), err.(string))
+
+				service.SendBadRequestJson(ctx, err, err.(string))
 			}
 		}()
 		ctx.Next()
