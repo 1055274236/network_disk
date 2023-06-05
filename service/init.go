@@ -17,9 +17,9 @@ func SendSuccessJson(ctx *gin.Context, data any, message string) {
 }
 
 func SendErrorJson(ctx *gin.Context, data any, errmessage string) {
-	ctx.JSON(http.StatusBadRequest, ReturnMessage{http.StatusBadRequest, data, errmessage})
+	ctx.JSON(http.StatusOK, ReturnMessage{http.StatusBadRequest, data, errmessage})
 }
 
 func SendJson(ctx *gin.Context, code int, data any, errmessage string) {
-	ctx.JSON(http.StatusOK, ReturnMessage{code, data, errmessage})
+	ctx.JSON(code, ReturnMessage{code, data, errmessage})
 }
