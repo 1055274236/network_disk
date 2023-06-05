@@ -10,6 +10,7 @@ type FileTempTableStruct struct {
 	FileId      int       `gorm:"column:file_id;type:int(11);NOT NULL" json:"file_id"`
 	CreatedUser int       `gorm:"column:created_user;type:int(11);NOT NULL" json:"created_user"`
 	CreatedAt   time.Time `gorm:"column:created_at;type:datetime;NOT NULL" json:"created_at"`
+	Timeout     time.Time `gorm:"column:timeout;type:datetime;NOT NULL" json:"timeout"`
 }
 
 func (m *FileTempTableStruct) TableName() string {
