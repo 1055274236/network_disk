@@ -2,15 +2,18 @@ package test
 
 import (
 	"fmt"
+	"os"
+	"path"
+	"strconv"
 	"testing"
+	"time"
 )
 
 func TestT(t *testing.T) {
-	value := map[string]string{
-		"asd": "qwe",
-		"qwe": "zxc",
+	p := path.Join("file", "path", strconv.FormatInt(time.Now().UnixMilli(), 10))
+	err := os.MkdirAll(p, os.ModePerm)
+	if err != nil {
+		fmt.Println(err)
 	}
-	for index, item := range value {
-		fmt.Println(index, item)
-	}
+	fmt.Println(p)
 }

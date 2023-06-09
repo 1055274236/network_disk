@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	gin.SetMode(gin.DebugMode)
+	gin.SetMode(gin.ReleaseMode)
 	engine := gin.New()
 	controller.SetupRouter(engine)
 	engine.Run(config.GlobalConfig.Gin.Serve.Host + config.GlobalConfig.Gin.Serve.Port)
