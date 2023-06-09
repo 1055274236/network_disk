@@ -29,15 +29,11 @@ func UserVerify() gin.HandlerFunc {
 		}
 
 		timeNow := time.Now()
-		b, ok := ctx.Get("ContextParams")
-		if !ok {
-			b = "err"
-		}
 		ctx.Set("userId", user.Id)
 		ctx.Set("account", user.Account)
 		ctx.Next()
 		ctx.Set("userId", nil)
 		ctx.Set("account", nil)
-		go oprationlogdao.Add(user.Id, b.(string), ctx.FullPath(), int(time.Since(timeNow).Milliseconds()), ctx.ClientIP())
+		go oprationlogdao.Add(user.Id, "", ctx.FullPath(), int(time.Since(timeNow).Milliseconds()), ctx.ClientIP())
 	}
 }

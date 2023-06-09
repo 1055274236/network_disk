@@ -10,15 +10,16 @@ import "NetworkDisk/dao"
 // md5 md5
 // sha1 sha1
 // createdUser 最初创建这个文件的用户
-func Add(folder string, file string, fileType string, size int64, md5 string, sha1 string, createdUser int) (FileStoreTableStruct, error) {
-	item := FileStoreTableStruct{Folder: folder, File: file, Type: fileType, Size: size, Md5: md5, Sha1: sha1, CreatedUser: createdUser}
+func Add(folder string, file string, fileType string, size int64, md5 string, sha1 string, createdUser int, status int) (FileStoreTableStruct, error) {
+	item := FileStoreTableStruct{Folder: folder, File: file, Type: fileType, Size: size,
+		Md5: md5, Sha1: sha1, CreatedUser: createdUser, Status: status}
 	result := dao.MysqlDb.Create(&item)
 	return item, result.Error
 }
 
 func GetByMd5AndSha1(md5 string, sha1 string) (FileStoreTableStruct, error) {
 	temp := FileStoreTableStruct{}
-	result := dao.MysqlDb.Limit(1).Where(&FileStoreTableStruct{Md5: md5, Sha1: sha1}).Find(&temp)
+	result := dao.MysqlDb.Where(&FileStoreTableStruct{Md5: md5, Sha1: sha1}).First(&temp)
 	return temp, result.Error
 }
 

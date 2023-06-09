@@ -1,9 +1,7 @@
 package middleware
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -30,11 +28,8 @@ func Logger() gin.HandlerFunc {
 		// ctx.Writer = writer
 
 		timeNow := time.Now()
-		b, _ := ctx.GetRawData()
-		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(b))
 		ctx.Next()
-		ctx.Set("ContextParams", string(b))
 		tc := time.Since(timeNow)
-		fmt.Printf("%v\t%v\t%v\t%v\t%v\n", ctx.FullPath(), string(b), ctx.ClientIP(), time.Now().Format("2006-01-02 15:04:05"), tc)
+		fmt.Printf("%v\t%v\t%v\t%v\n", ctx.FullPath(), ctx.ClientIP(), time.Now().Format("2006-01-02 15:04:05"), tc)
 	}
 }

@@ -5,7 +5,7 @@ import (
 )
 
 type OperationLogTableStruct struct {
-	Id        int       `gorm:"column:id;type:int(11);primary_key" json:"id"`
+	Id        int       `gorm:"column:id;type:int(11);primary_key;AUTO_INCREMENT" json:"id"`
 	UserId    int       `gorm:"column:user_id;type:int(11);comment:用户操作id;NOT NULL" json:"user_id"`
 	Params    string    `gorm:"column:Params;type:text" json:"params"`
 	Url       string    `gorm:"column:url;type:varchar(255);comment:api网址;NOT NULL" json:"url"`
