@@ -8,6 +8,7 @@ import (
 	"crypto/sha1"
 	"errors"
 	"fmt"
+	"hash"
 	"io"
 	"mime"
 	"net/http"
@@ -164,6 +165,7 @@ func BaseUpload(ctx *gin.Context) {
 			}
 		}
 	}
+	service.SendSuccessJson(ctx, nil, "操作成功！")
 }
 
 // 解析数据报文头，获取文件名称
@@ -188,42 +190,33 @@ func BaseUpload(ctx *gin.Context) {
 // }
 
 func loggerUpload(folder string, file string, createdUser int, filePath string) {
+	// type
 	f, err := os.Open(filePath)
 	if err != nil {
 		panic("文件错误！")
 	}
 	defer func() {
-		if f != nil {
-			f.Close()
-		}
+		f.Close()
 	}()
-
-	buffer := make([]byte, 512)
+	buffer := make([]byte, 261)
 	n, _ := f.Read(buffer)
 	contentType := http.DetectContentType(buffer[:n])
-	f.Close()
 
+	// size
 	fs, _ := os.Stat(filePath)
 
-	f, _ = os.Open(filePath)
-	md5hash := md5.New()
-	if _, err := io.Copy(md5hash, f); err != nil {
-		panic("系统解析文件错误！")
-	}
-	md5str := fmt.Sprintf("%x", md5hash.Sum(nil))
-	f.Close()
-
-	f, _ = os.Open(filePath)
-	sha1hash := sha1.New()
-	if _, err := io.Copy(sha1hash, f); err != nil {
-		panic("系统解析文件错误！")
-	}
-	sha1str := fmt.Sprintf("%x", sha1hash.Sum(nil))
-	f.Close()
+	// md5 and sha1
+	md5Chan := make(chan string)
+	sha1Chan := make(chan string)
+	go getFileFeatureCode(filePath, "md5", md5Chan)
+	go getFileFeatureCode(filePath, "sha1", sha1Chan)
+	md5str := <-md5Chan
+	sha1str := <-sha1Chan
 
 	// 数据库中未查找到相同文件特征
 	_, resultErr := filestoredao.GetByMd5AndSha1(md5str, sha1str)
 	if errors.Is(resultErr, gorm.ErrRecordNotFound) {
+		// not found
 		filestoredao.Add(folder, file, contentType, fs.Size(), md5str, sha1str, createdUser, 1)
 	} else {
 		deleteFile(filePath)
@@ -236,4 +229,27 @@ func deleteFile(filePath string) {
 	if files, _ := os.ReadDir(folderPath); len(files) == 0 {
 		os.Remove(folderPath)
 	}
+}
+
+func getFileFeatureCode(filePath string, method string, result chan string) {
+	f, err := os.Open(filePath)
+	defer func() {
+		f.Close()
+	}()
+	var hashMethods hash.Hash
+	if err != nil {
+		panic("文件读取错误！")
+	}
+	if method == "md5" {
+		hashMethods = md5.New()
+	} else if method == "sha1" {
+		hashMethods = sha1.New()
+	} else {
+		result <- ""
+		return
+	}
+	if _, err := io.Copy(hashMethods, f); err != nil {
+		panic("系统解析文件错误！")
+	}
+	result <- fmt.Sprintf("%x", hashMethods.Sum(nil))
 }
