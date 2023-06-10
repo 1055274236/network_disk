@@ -199,27 +199,29 @@ func loggerUpload(folder string, file string, createdUser int, filePath string) 
 	}()
 
 	buffer := make([]byte, 512)
-	_, _ = f.Read(buffer)
-	contentType := http.DetectContentType(buffer)
+	n, _ := f.Read(buffer)
+	contentType := http.DetectContentType(buffer[:n])
+	f.Close()
 
 	fs, _ := os.Stat(filePath)
 
+	f, _ = os.Open(filePath)
 	md5hash := md5.New()
 	if _, err := io.Copy(md5hash, f); err != nil {
 		panic("系统解析文件错误！")
 	}
-	md5num := md5hash.Sum(nil)
-	md5str := fmt.Sprintf("%x", md5num)
+	md5str := fmt.Sprintf("%x", md5hash.Sum(nil))
+	f.Close()
 
+	f, _ = os.Open(filePath)
 	sha1hash := sha1.New()
 	if _, err := io.Copy(sha1hash, f); err != nil {
 		panic("系统解析文件错误！")
 	}
-	sha1num := sha1hash.Sum(nil)
-	sha1str := fmt.Sprintf("%x", sha1num)
+	sha1str := fmt.Sprintf("%x", sha1hash.Sum(nil))
+	f.Close()
 
 	// 数据库中未查找到相同文件特征
-	f.Close()
 	_, resultErr := filestoredao.GetByMd5AndSha1(md5str, sha1str)
 	if errors.Is(resultErr, gorm.ErrRecordNotFound) {
 		filestoredao.Add(folder, file, contentType, fs.Size(), md5str, sha1str, createdUser, 1)
