@@ -16,16 +16,19 @@ func UserVerify() gin.HandlerFunc {
 		if err != nil {
 			service.SendErrorJson(ctx, nil, "用户信息错误！请重新登陆！")
 			ctx.Abort()
+			return
 		}
 		decodeString, err := base64.StdEncoding.DecodeString(token)
 		if err != nil {
 			service.SendErrorJson(ctx, nil, "用户信息错误！请重新登陆！")
 			ctx.Abort()
+			return
 		}
 		user, err := verifyuser.DecodeUser(decodeString)
 		if err != nil {
 			service.SendErrorJson(ctx, nil, "用户信息错误！请重新登陆！")
 			ctx.Abort()
+			return
 		}
 
 		timeNow := time.Now()

@@ -10,7 +10,11 @@ func ParseToStr(mp map[string]string) string {
 	for key, val := range mp {
 		values += "&" + key + "=" + val
 	}
-	return values[1:]
+	if len(mp) > 0 {
+		return values[1:]
+	} else {
+		return values
+	}
 }
 
 func Get(url string, query map[string]string) *httptest.ResponseRecorder {

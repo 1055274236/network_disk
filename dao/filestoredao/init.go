@@ -34,3 +34,9 @@ func ChangeType(id int, fileType string) (FileStoreTableStruct, error) {
 	result := dao.MysqlDb.Model(&temp).UpdateColumn("type", fileType)
 	return temp, result.Error
 }
+
+func DeleteById(id int) error {
+	temp := FileStoreTableStruct{Id: id}
+	result := dao.MysqlDb.Delete(&temp)
+	return result.Error
+}
