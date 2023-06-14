@@ -13,6 +13,7 @@ type FileIndexTableStruct struct {
 	StaticId    int       `gorm:"column:static_id;type:int(11);NOT NULL" json:"static_id"`
 	ParentId    int       `gorm:"column:parent_id;type:int(11);default:-1;NOT NULL" json:"parent_id"`
 	HoldingUser int       `gorm:"column:holding_user;type:int(11);NOT NULL" json:"holding_user"`
+	IsShow      int       `gorm:"column:is_show;type:tinyint(1);NOT NULL" json:"is_show"`
 	CreatedAt   time.Time `gorm:"column:created_at;type:datetime;NOT NULL" json:"created_at"`
 	UpdatedAd   time.Time `gorm:"column:updated_ad;type:datetime;NOT NULL" json:"updated_ad"`
 }

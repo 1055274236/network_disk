@@ -13,15 +13,18 @@ import (
 // static_id 文件对应静态文件Id
 // parentId 父文件夹Id
 // holdingUser 拥有者用户ID
-func Add(name string, isDir bool, size int64, staticId int, parentId int, holdingUser int) (FileIndexTableStruct, error) {
-	item := FileIndexTableStruct{FileName: name, ParentId: parentId, HoldingUser: holdingUser, IsDir: 1}
+func Add(name string, isDir bool, size int64, staticId int, parentId int, holdingUser int, isShow bool) (FileIndexTableStruct, error) {
+	item := FileIndexTableStruct{FileName: name, ParentId: parentId, HoldingUser: holdingUser, IsDir: 1, IsShow: 0}
 	if !isDir {
 		item.Size = size
 		item.StaticId = staticId
 		item.IsDir = 0
 	}
+	if isShow {
+		item.IsShow = 1
+	}
 	result := dao.MysqlDb.Create(&item)
-	dao.MysqlDb.Model(&FileIndexTableStruct{}).Where("id = ?", parentId).UpdateColumn("file_num", gorm.Expr("file_num + ?", 1))
+	dao.MysqlDb.Model(&FileIndexTableStruct{Id: parentId}).UpdateColumn("file_num", gorm.Expr("file_num + ?", 1))
 	return item, result.Error
 }
 
@@ -64,6 +67,23 @@ func GetByUserIdAndParentId(userId int, parentId int) ([]FileIndexTableStruct, e
 		parent := FileIndexTableStruct{Id: parentId}
 		dao.MysqlDb.First(&parent, parentId)
 		result = dao.MysqlDb.Where(&FileIndexTableStruct{HoldingUser: userId, ParentId: parentId}).Limit(parent.FileNum).Find(&value)
+	}
+	return value, result.Error
+}
+
+// @params
+// userId int 拥有者ID
+// parentId int 父文件夹ID
+func GetByUserIdAndParentIdShow(userId int, parentId int) ([]FileIndexTableStruct, error) {
+	value := []FileIndexTableStruct{}
+	var result *gorm.DB
+	// 适当优化搜索
+	if parentId == 0 {
+		result = dao.MysqlDb.Where(&FileIndexTableStruct{HoldingUser: userId, ParentId: parentId, IsShow: 1}).Find(&value)
+	} else {
+		parent := FileIndexTableStruct{Id: parentId}
+		dao.MysqlDb.First(&parent, parentId)
+		result = dao.MysqlDb.Where(&FileIndexTableStruct{HoldingUser: userId, ParentId: parentId, IsShow: 1}).Limit(parent.FileNum).Find(&value)
 	}
 	return value, result.Error
 }
