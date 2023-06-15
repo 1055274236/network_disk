@@ -25,7 +25,7 @@ func Mkdir(ctx *gin.Context) {
 		return
 	}
 
-	dir, err := fileindexdao.Add(name, true, 0, 0, parentId, userId.(int), true)
+	dir, err := fileindexdao.Add(name, true, 0, parentId, userId.(int), true)
 	if err != nil {
 		service.SendErrorJson(ctx, err, "数据错误！")
 		return

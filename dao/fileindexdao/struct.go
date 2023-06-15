@@ -7,7 +7,6 @@ import (
 type FileIndexTableStruct struct {
 	Id          int       `gorm:"column:id;type:int(11);primary_key;AUTO_INCREMENT" json:"id"`
 	FileName    string    `gorm:"column:file_name;type:varchar(255);NOT NULL" json:"file_name"`
-	Size        int64     `gorm:"column:size;type:bigint(20);default:0;NOT NULL" json:"size"`
 	IsDir       int       `gorm:"column:is_dir;type:tinyint(1);default:0;NOT NULL" json:"is_dir"`
 	FileNum     int       `gorm:"column:file_num;type:int(11);default:0;NOT NULL" json:"file_num"`
 	StaticId    int       `gorm:"column:static_id;type:int(11);NOT NULL" json:"static_id"`

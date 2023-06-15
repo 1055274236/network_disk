@@ -8,15 +8,13 @@ import (
 
 // @params:
 // name 文件名称
-// size 文件尺寸
 // isDir 是否为文件夹
 // static_id 文件对应静态文件Id
 // parentId 父文件夹Id
 // holdingUser 拥有者用户ID
-func Add(name string, isDir bool, size int64, staticId int, parentId int, holdingUser int, isShow bool) (FileIndexTableStruct, error) {
+func Add(name string, isDir bool, staticId int, parentId int, holdingUser int, isShow bool) (FileIndexTableStruct, error) {
 	item := FileIndexTableStruct{FileName: name, ParentId: parentId, HoldingUser: holdingUser, IsDir: 1, IsShow: 0}
 	if !isDir {
-		item.Size = size
 		item.StaticId = staticId
 		item.IsDir = 0
 	}
