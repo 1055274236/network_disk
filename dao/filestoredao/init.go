@@ -17,9 +17,15 @@ func Add(folder string, file string, fileType string, size int64, md5 string, sh
 	return item, result.Error
 }
 
-func GetByMd5AndSha1(md5 string, sha1 string) (FileStoreTableStruct, error) {
+func GetByMd5AndSha1(md5 string, sha1 string) ([]FileStoreTableStruct, error) {
+	temp := []FileStoreTableStruct{}
+	result := dao.MysqlDb.Where(&FileStoreTableStruct{Md5: md5, Sha1: sha1}).Find(&temp)
+	return temp, result.Error
+}
+
+func GetByMd5AndSha1One(md5 string, sha1 string) (FileStoreTableStruct, error) {
 	temp := FileStoreTableStruct{}
-	result := dao.MysqlDb.Where(&FileStoreTableStruct{Md5: md5, Sha1: sha1}).First(&temp)
+	result := dao.MysqlDb.Where(&FileStoreTableStruct{Md5: md5, Sha1: sha1, Status: 1}).First(&temp)
 	return temp, result.Error
 }
 

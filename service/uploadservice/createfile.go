@@ -26,7 +26,7 @@ func CreateFileIndex(ctx *gin.Context) {
 		return
 	}
 
-	fileSome, isRErr := filestoredao.GetByMd5AndSha1(md5Str, sha1Str)
+	fileSome, isRErr := filestoredao.GetByMd5AndSha1One(md5Str, sha1Str)
 	var fileStore filestoredao.FileStoreTableStruct
 	if isRErr != nil {
 		if errors.Is(isRErr, gorm.ErrRecordNotFound) {

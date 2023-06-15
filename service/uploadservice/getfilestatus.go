@@ -22,13 +22,13 @@ func GetFileStatus(ctx *gin.Context) {
 	sha1 := ctx.Query("sha1")
 
 	if md5 != "" && sha1 != "" {
-		result, daoErr := filestoredao.GetByMd5AndSha1(md5, sha1)
+		result, daoErr := filestoredao.GetByMd5AndSha1One(md5, sha1)
 		if daoErr != nil {
 			if errors.Is(daoErr, gorm.ErrRecordNotFound) {
 				service.SendJson(ctx, http.StatusNotFound, nil, "未找到相关数据！")
 				return
 			}
-			panic("操作错误！")
+			panic("数据库错误！")
 		}
 
 		if result.Status == 1 {
