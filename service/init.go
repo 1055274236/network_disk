@@ -24,6 +24,10 @@ func SendBadRequestJson(ctx *gin.Context, data any, errmessage string) {
 	ctx.JSON(http.StatusBadRequest, ReturnMessage{http.StatusBadRequest, data, errmessage})
 }
 
+func SendNotFoundJson(ctx *gin.Context, data any, errmessage string) {
+	ctx.JSON(http.StatusOK, ReturnMessage{http.StatusNotFound, data, errmessage})
+}
+
 func SendJson(ctx *gin.Context, code int, data any, errmessage string) {
 	ctx.JSON(code, ReturnMessage{code, data, errmessage})
 }
