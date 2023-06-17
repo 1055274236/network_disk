@@ -69,10 +69,8 @@ func BaseUpload(ctx *gin.Context) {
 	}
 
 	// 文件名称
-	// var sourceFileName string = ""
 
 	headEndIndex = bytes.Index(readBuf[:read_len], []byte{13, 10, 13, 10})
-	// sourceFileName = parseFileName(readBuf[len(boundaryFirst):headEndIndex])
 	jointChar = bytes.Clone(readBuf[headEndIndex+4 : read_len])
 	charTemp = bytes.Clone(jointChar)
 
@@ -97,7 +95,6 @@ func BaseUpload(ctx *gin.Context) {
 				jointChar = jointChar[bIndex:]
 
 				headEndIndex = bytes.Index(readBuf[:read_len], []byte{13, 10, 13, 10})
-				// sourceFileName = parseFileName(readBuf[len(boundaryBase):headEndIndex])
 				staticFileName = uuid.NewV4().String()
 				staticFilePath = path.Join("file", staticFolderName, staticFileName)
 				f, _ = os.Create(staticFilePath)
@@ -153,7 +150,6 @@ func BaseUpload(ctx *gin.Context) {
 
 					jointChar = jointChar[bIndex:]
 
-					// sourceFileName = parseFileName(readBuf[len(boundaryBase):headEndIndex])
 					staticFileName = uuid.NewV4().String()
 					staticFilePath = path.Join("file", staticFolderName, staticFileName)
 					f, _ = os.Create(staticFilePath)
@@ -167,27 +163,6 @@ func BaseUpload(ctx *gin.Context) {
 	}
 	service.SendSuccessJson(ctx, nil, "操作成功！")
 }
-
-// 解析数据报文头，获取文件名称
-// func parseFileName(source []byte) string {
-// 	fileName := ""
-// 	headArr := bytes.Split(source, []byte{13, 10})
-
-// 	for _, headItem := range headArr {
-// 		headItemKeyValueArr := strings.Split(string(headItem), ":")
-// 		if strings.ToLower(headItemKeyValueArr[0]) == "content-disposition" {
-// 			_, params, err := mime.ParseMediaType(headItemKeyValueArr[1])
-// 			if err != nil {
-// 				panic("数据解析错误！联系开发人员处理！")
-// 			}
-
-// 			fileName = params["filename"]
-// 			break
-// 		}
-// 	}
-
-// 	return fileName
-// }
 
 func loggerUpload(folder string, file string, createdUser int, filePath string) {
 	// type
