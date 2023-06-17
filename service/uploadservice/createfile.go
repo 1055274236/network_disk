@@ -5,6 +5,8 @@ import (
 	"NetworkDisk/dao/filestoredao"
 	"NetworkDisk/service"
 	"errors"
+	"os"
+	"path"
 	"strconv"
 	"time"
 
@@ -30,11 +32,20 @@ func CreateFileIndex(ctx *gin.Context) {
 	var fileStore filestoredao.FileStoreTableStruct
 	if isRErr != nil {
 		if errors.Is(isRErr, gorm.ErrRecordNotFound) {
-			fileStore = fileSome
-		} else {
-			fileStore, _ = filestoredao.Add(time.Now().Format("20060102"), uuid.NewV4().String(), "", 0, "", "", userId.(int), 0)
+			staticFolderName := time.Now().Format("20060102")
+			staticFileName := uuid.NewV4().String()
+			if os.MkdirAll(path.Join("file", staticFolderName), os.ModePerm) != nil {
+				panic("文件夹创建错误！")
+			}
+			f, fErr := os.Create(path.Join("file", staticFolderName, staticFileName))
+			if fErr != nil {
+				panic("文件创建失败！")
+			}
+			f.Close()
+			fileSome, _ = filestoredao.Add(staticFolderName, staticFileName, "", 0, "", "", userId.(int), 0)
 		}
 	}
+	fileStore = fileSome
 
 	resultArr, resultErr := fileindexdao.GetByUserIdAndParentId(userId.(int), parentId)
 	if resultErr != nil {
