@@ -12,4 +12,5 @@ func SetupRoute(engine *gin.Engine, userVerified *gin.RouterGroup) {
 	userVerified.POST("/upload/mkdir", uploadservice.Mkdir)
 	userVerified.POST("/upload/createfile", uploadservice.CreateFileIndex)
 	engine.GET("/status/file", uploadservice.GetFileStatus)
+	userVerified.GET("/status/filebyid", uploadservice.GetFileStatusById)
 }
