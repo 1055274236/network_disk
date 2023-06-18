@@ -19,6 +19,7 @@ func CreateFileIndex(ctx *gin.Context) {
 	userId, _ := ctx.Get("userId")
 	parentIdStr := ctx.PostForm("parentId")
 	name := ctx.PostForm("name")
+	isExist := true
 	parentId, atoiErr := strconv.Atoi(parentIdStr)
 
 	md5Str := ctx.Query("md5")
@@ -42,7 +43,8 @@ func CreateFileIndex(ctx *gin.Context) {
 				panic("文件创建失败！")
 			}
 			f.Close()
-			fileSome, _ = filestoredao.Add(staticFolderName, staticFileName, "", 0, "", "", userId.(int), 0)
+			fileSome, _ = filestoredao.Add(staticFolderName, staticFileName, "", 0, md5Str, sha1Str, userId.(int), 0)
+			isExist = false
 		}
 	}
 	fileStore = fileSome
@@ -64,8 +66,9 @@ func CreateFileIndex(ctx *gin.Context) {
 		panic("数据库错误！")
 	}
 	service.SendSuccessJson(ctx, struct {
-		Id int `json:"id"`
-	}{result.Id}, "创建成功！")
+		IsExist bool `json:"isExist"`
+		Id      int  `json:"id"`
+	}{isExist, result.Id}, "创建成功！")
 }
 
 func findSome(arr []fileindexdao.FileIndexTableStruct, name string) bool {
