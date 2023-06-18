@@ -13,10 +13,16 @@ type ReturnMessage struct {
 }
 
 func SendSuccessJson(ctx *gin.Context, data any, message string) {
+	if message == "" {
+		message = "操作成功！"
+	}
 	ctx.JSON(http.StatusOK, ReturnMessage{http.StatusOK, data, message})
 }
 
 func SendErrorJson(ctx *gin.Context, data any, errmessage string) {
+	if errmessage == "" {
+		errmessage = "操作失败！"
+	}
 	ctx.JSON(http.StatusOK, ReturnMessage{http.StatusBadRequest, data, errmessage})
 }
 
@@ -25,6 +31,9 @@ func SendBadRequestJson(ctx *gin.Context, data any, errmessage string) {
 }
 
 func SendNotFoundJson(ctx *gin.Context, data any, errmessage string) {
+	if errmessage == "" {
+		errmessage = "未找到相关数据！"
+	}
 	ctx.JSON(http.StatusOK, ReturnMessage{http.StatusNotFound, data, errmessage})
 }
 
