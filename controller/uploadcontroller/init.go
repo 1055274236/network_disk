@@ -8,6 +8,7 @@ import (
 
 func SetupRoute(engine *gin.Engine, userVerified *gin.RouterGroup) {
 	userVerified.POST("/upload/base", uploadservice.BaseUpload)
+	userVerified.POST("/upload/file/:id", uploadservice.UploadById)
 
 	userVerified.POST("/upload/mkdir", uploadservice.Mkdir)
 	userVerified.POST("/upload/createfile", uploadservice.CreateFileIndex)
