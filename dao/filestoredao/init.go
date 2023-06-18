@@ -36,7 +36,7 @@ func GetById(id int) (FileStoreTableStruct, error) {
 }
 
 func ChangeType(id int, fileType string) (FileStoreTableStruct, error) {
-	temp := FileStoreTableStruct{Id: id, Type: fileType}
+	temp := FileStoreTableStruct{Id: id}
 	result := dao.MysqlDb.Model(&temp).UpdateColumn("type", fileType)
 	return temp, result.Error
 }
@@ -45,4 +45,10 @@ func DeleteById(id int) error {
 	temp := FileStoreTableStruct{Id: id}
 	result := dao.MysqlDb.Delete(&temp)
 	return result.Error
+}
+
+func ChangeModifiableData(id int, fileType string, size int64, status int, user int) (FileStoreTableStruct, error) {
+	temp := FileStoreTableStruct{Id: id}
+	result := dao.MysqlDb.Model(&temp).Updates(FileStoreTableStruct{Type: fileType, Size: size, Status: status, CreatedUser: user})
+	return temp, result.Error
 }
