@@ -20,3 +20,22 @@ type FileIndexTableStruct struct {
 func (m *FileIndexTableStruct) TableName() string {
 	return "file_index"
 }
+
+type UserTableStruct struct {
+	Id          int       `gorm:"column:id;type:int(11);primary_key;AUTO_INCREMENT" json:"id"`
+	NowCapacity int64     `gorm:"column:now_capacity;type:bigint(20);default:0;comment:当前容量;NOT NULL" json:"now_capacity"`
+	UpdatedAt   time.Time `gorm:"column:updated_at;type:datetime;comment:修改时间;NOT NULL" json:"updated_at"`
+}
+
+func (m *UserTableStruct) TableName() string {
+	return "user"
+}
+
+type FileStoreTableStruct struct {
+	Id   int   `gorm:"column:id;type:int(11);primary_key;AUTO_INCREMENT" json:"id"`
+	Size int64 `gorm:"column:size;type:bigint(20);NOT NULL" json:"size"`
+}
+
+func (m *FileStoreTableStruct) TableName() string {
+	return "file_store"
+}

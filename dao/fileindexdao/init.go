@@ -21,9 +21,24 @@ func Add(name string, isDir bool, staticId int, parentId int, holdingUser int, i
 	if isShow {
 		item.IsShow = 1
 	}
-	result := dao.MysqlDb.Create(&item)
-	dao.MysqlDb.Model(&FileIndexTableStruct{Id: parentId}).UpdateColumn("file_num", gorm.Expr("file_num + ?", 1))
-	return item, result.Error
+
+	trErr := dao.MysqlDb.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&item).Error; err != nil {
+			return err
+		}
+		if err := tx.Model(&FileIndexTableStruct{Id: parentId}).UpdateColumn("file_num", gorm.Expr("file_num + ?", 1)).Error; err != nil {
+			return err
+		}
+		tempFileStore := FileStoreTableStruct{Id: staticId}
+		if err := tx.First(&tempFileStore, staticId).Error; err != nil {
+			return err
+		}
+		if err := tx.Model(&UserTableStruct{Id: holdingUser}).UpdateColumn("now_capacity", gorm.Expr("now_capacity + ?", tempFileStore.Size)).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+	return item, trErr
 }
 
 func DeleteByIdAndAccount(ids []string, holdingUser int) (int64, error) {

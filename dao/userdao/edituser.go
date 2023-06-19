@@ -21,3 +21,9 @@ func GetByAccount(account string) (UserTableStruct, error) {
 	result := dao.MysqlDb.Where("account = ?", account).First(&user)
 	return user, result.Error
 }
+
+func GetCapacity(id int) (int64, int64, error) {
+	temp := UserTableStruct{Id: id}
+	result := dao.MysqlDb.Find(&temp, id)
+	return temp.MaxCapacity, temp.NowCapacity, result.Error
+}

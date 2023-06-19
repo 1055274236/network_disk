@@ -3,6 +3,7 @@ package uploadservice
 import (
 	"NetworkDisk/dao/fileindexdao"
 	"NetworkDisk/dao/filestoredao"
+	"NetworkDisk/dao/userdao"
 	"NetworkDisk/service"
 	"errors"
 	"os"
@@ -18,14 +19,21 @@ import (
 func CreateFileIndex(ctx *gin.Context) {
 	userId, _ := ctx.Get("userId")
 	parentIdStr := ctx.PostForm("parentId")
+	sizeStr := ctx.PostForm("size")
 	name := ctx.PostForm("name")
 	isExist := true
 	parentId, atoiErr := strconv.Atoi(parentIdStr)
+	size, sizeErr := strconv.ParseInt(sizeStr, 10, 64)
 
 	md5Str := ctx.Query("md5")
 	sha1Str := ctx.Query("sha1")
-	if atoiErr != nil || md5Str == "" || sha1Str == "" {
+	maxCapacity, nowCapacity, capacityErr := userdao.GetCapacity(userId.(int))
+	if sizeErr != nil || atoiErr != nil || capacityErr != nil || md5Str == "" || sha1Str == "" {
 		service.SendErrorJson(ctx, nil, "参数错误！")
+		return
+	}
+	if nowCapacity+size > maxCapacity {
+		service.SendErrorJson(ctx, nil, "容量超限！")
 		return
 	}
 
@@ -43,8 +51,10 @@ func CreateFileIndex(ctx *gin.Context) {
 				panic("文件创建失败！")
 			}
 			f.Close()
-			fileSome, _ = filestoredao.Add(staticFolderName, staticFileName, "", 0, md5Str, sha1Str, userId.(int), 0)
+			fileSome, _ = filestoredao.Add(staticFolderName, staticFileName, "", size, md5Str, sha1Str, userId.(int), 0)
 			isExist = false
+		} else {
+			panic("数据库错误！")
 		}
 	}
 	fileStore = fileSome
