@@ -40,3 +40,10 @@ func SendNotFoundJson(ctx *gin.Context, data any, errmessage string) {
 func SendJson(ctx *gin.Context, code int, data any, errmessage string) {
 	ctx.JSON(code, ReturnMessage{code, data, errmessage})
 }
+
+func SendNotLoginJson(ctx *gin.Context, errmessage string) {
+	if errmessage == "" {
+		errmessage = "登录信息错误，请重新登陆！"
+	}
+	ctx.JSON(http.StatusUnauthorized, ReturnMessage{Code: http.StatusUnauthorized, Data: nil, Message: errmessage})
+}
