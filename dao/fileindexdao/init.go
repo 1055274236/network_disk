@@ -75,7 +75,7 @@ func GetByUserIdAndParentId(userId int, parentId int) ([]FileIndexTableStruct, e
 	var result *gorm.DB
 	// 适当优化搜索
 	if parentId == 0 {
-		result = dao.MysqlDb.Where(&FileIndexTableStruct{HoldingUser: userId, ParentId: parentId}).Find(&value)
+		result = dao.MysqlDb.Where(map[string]interface{}{"holding_user": userId, "parent_id": parentId, "is_show": 1}).Find(&value)
 	} else {
 		parent := FileIndexTableStruct{Id: parentId}
 		dao.MysqlDb.First(&parent, parentId)
@@ -92,7 +92,7 @@ func GetByUserIdAndParentIdShow(userId int, parentId int) ([]FileIndexTableStruc
 	var result *gorm.DB
 	// 适当优化搜索
 	if parentId == 0 {
-		result = dao.MysqlDb.Where(&FileIndexTableStruct{HoldingUser: userId, ParentId: parentId, IsShow: 1}).Find(&value)
+		result = dao.MysqlDb.Where(map[string]interface{}{"holding_user": userId, "parent_id": parentId, "is_show": 1}).Find(&value)
 	} else {
 		parent := FileIndexTableStruct{Id: parentId}
 		dao.MysqlDb.First(&parent, parentId)
@@ -119,4 +119,15 @@ func GetIsRepetition(userId int, parentId int, name string) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func GetFileName(fileIds []int) ([]FileIndexNameStruct, error) {
+	var daor *gorm.DB
+	result := []FileIndexNameStruct{}
+	for _, item := range fileIds {
+		temp := &FileIndexNameStruct{}
+		daor = dao.MysqlDb.Model(&FileIndexTableStruct{}).Find(&temp, item)
+		result = append(result, *temp)
+	}
+	return result, daor.Error
 }

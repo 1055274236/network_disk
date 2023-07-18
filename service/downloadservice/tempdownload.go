@@ -1,6 +1,7 @@
 package downloadservice
 
 import (
+	"NetworkDisk/dao/fileindexdao"
 	"NetworkDisk/dao/filestoredao"
 	"NetworkDisk/dao/filetempdao"
 	"NetworkDisk/service"
@@ -36,4 +37,26 @@ func TempDownload(ctx *gin.Context) {
 	}
 
 	ctx.File(path.Join("/", file.Folder, file.File))
+}
+
+func DownloadFileByIndex(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	name := ctx.Param("name")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil || name == "" {
+		service.SendBadRequestJson(ctx, nil, "错误参数！")
+		return
+	}
+	fileIndex, fileIndexErr := fileindexdao.GetById(id)
+	if fileIndexErr != nil || name != fileIndex.FileName {
+		service.SendBadRequestJson(ctx, nil, "错误参数！")
+		return
+	}
+	filestore, fileStoreErr := filestoredao.GetById(fileIndex.StaticId)
+	if fileStoreErr != nil {
+		service.SendBadRequestJson(ctx, nil, "错误参数！")
+		return
+	}
+	ctx.File(path.Join("file", filestore.Folder, filestore.File))
 }

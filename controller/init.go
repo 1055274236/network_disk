@@ -2,6 +2,7 @@ package controller
 
 import (
 	"NetworkDisk/controller/downloadcontroller"
+	"NetworkDisk/controller/filecontroller"
 	"NetworkDisk/controller/uploadcontroller"
 	"NetworkDisk/controller/usercontroller"
 	"NetworkDisk/middleware"
@@ -15,4 +16,5 @@ func SetupRouter(engine *gin.Engine) {
 	userVerified := engine.Group("/", middleware.UserVerify())
 	usercontroller.SetupRoute(engine)
 	uploadcontroller.SetupRoute(engine, userVerified)
+	filecontroller.SetupRoute(engine, userVerified)
 }
