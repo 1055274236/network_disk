@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -65,10 +66,14 @@ func CreateFileIndex(ctx *gin.Context) {
 	}
 	for {
 		if findSome(resultArr, name) {
-			name = name + "(1)"
-			continue
+			i := strings.Index(name, ".")
+			if i == -1 {
+				i = len(name)
+			}
+			name = name[:i] + "(1)" + name[i:]
+		} else {
+			break
 		}
-		break
 	}
 
 	result, resultErr := fileindexdao.Add(name, false, fileStore.Id, parentId, userId.(int), false)
